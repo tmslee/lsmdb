@@ -166,3 +166,37 @@ These are listed as "Future Work" — they don't diminish portfolio value.
 - The skip list being insert-only during its active lifetime is a critical simplification. Deletions are handled via tombstone markers (kDeletion type), and actual node memory is reclaimed only when the entire MemTable is discarded. This avoids the complexity of concurrent removal in a lock-free skip list.
 
 **Next session**: Begin Phase 1 — CMake setup, Slice, Status, coding utils, arena allocator
+
+### Session 2 — 2026-02-06: Phase 1 Kickoff — Build System & Tooling
+
+**What happened**:
+- Set up complete CMake build system with C++20, strict warnings, and sanitizer presets
+- Configured CMake presets: Debug, Release, ASan, TSan, UBSan, Fuzz
+- Integrated GoogleTest via FetchContent for unit testing
+- Integrated `{fmt}` library via FetchContent (replaces `std::format` — not available on GCC 11/Clang 14)
+- Added `.clang-format` (Google style, 4-space indent, 100-col limit) for consistent formatting
+- Added `.clang-tidy` with bugprone, performance, modernize, readability checks and Google naming conventions
+- Added GitHub Actions CI: GCC + Clang matrix build, sanitizer jobs (ASan, TSan, UBSan)
+- Verified debug preset builds cleanly
+
+**Decisions made**:
+- `{fmt}` over `std::format`: GCC 11 and Clang 14 don't ship `std::format` (requires GCC 13+/Clang 17+). `{fmt}` is the reference implementation `std::format` was based on — used widely in production. Trivial to swap later.
+- CMake preset version 3 (not 6): constrained by CMake 3.22 on Ubuntu 22.04. Version 3 supports `configurePresets` only — build/test presets require version 4+ (CMake 3.23+).
+- Google C++ style: matches LevelDB/RocksDB conventions. `CamelCase` types/functions, `lower_case_` members with trailing underscore, `kCamelCase` constants.
+- `.clang-tidy` disables `pro-bounds-pointer-arithmetic` (we're writing allocators that legitimately do pointer math) and `easily-swappable-parameters` (too noisy for low-level code).
+- Warnings are function-scoped per-target (modern CMake best practice — never global `add_compile_options`).
+- Sanitizers use `PUBLIC` visibility so they propagate to test binaries that link against the library.
+
+**Key insights**:
+- Always check tool versions before writing build configs. CMake preset versions, compiler C++20 feature support, and clang-tidy check availability all vary significantly across Ubuntu LTS releases.
+- An empty `add_library(STATIC)` with no sources fails on CMake 3.22 — need a placeholder `.cpp` file until real sources are added.
+- `-fno-sanitize-recover=all` on UBSan makes it abort on first violation — essential for CI (you want hard failures, not silent continuation).
+
+**Files created**:
+- `CMakeLists.txt`, `CMakePresets.json` — build system
+- `cmake/CompilerWarnings.cmake`, `cmake/Sanitizers.cmake`, `cmake/GoogleTest.cmake`, `cmake/Fmt.cmake` — CMake modules
+- `.clang-format`, `.clang-tidy` — code quality tooling
+- `.github/workflows/ci.yml` — CI pipeline
+- `.gitignore`, `test/CMakeLists.txt`, `src/lsmdb.cpp` (placeholder)
+
+**Next session**: Continue Phase 1 — Slice, coding.h, Status, Options
