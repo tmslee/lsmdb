@@ -39,10 +39,10 @@ jobs:
           CXX: ${{ matrix.cxx }}
 
       - name: Build (Debug)
-        run: cmake --build --preset debug
+        run: cmake --build build/debug
 
       - name: Test (Debug)
-        run: ctest --preset debug
+        run: ctest --test-dir build/debug --output-on-failure
 
   sanitizers:
     strategy:
