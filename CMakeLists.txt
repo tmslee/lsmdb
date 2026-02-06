@@ -14,13 +14,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(CompilerWarnings)
 include(Sanitizers)
+include(Fmt)
 
 # ── Library Target ──────────────────────────────────────────────
 add_library(lsmdb STATIC)
 add_library(lsmdb::lsmdb ALIAS lsmdb)
 
 target_sources(lsmdb PRIVATE
-    # Sources added as components are implemented
+    src/lsmdb.cpp  # Placeholder — replaced as components are implemented
 )
 
 target_include_directories(lsmdb
@@ -28,6 +29,8 @@ target_include_directories(lsmdb
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
+
+target_link_libraries(lsmdb PUBLIC fmt::fmt)
 
 lsmdb_set_warnings(lsmdb)
 lsmdb_set_sanitizer(lsmdb)
