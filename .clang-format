@@ -1,0 +1,23 @@
+---
+BasedOnStyle: Google
+ColumnLimit: 100
+IndentWidth: 4
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+BreakBeforeBraces: Attach
+DerivePointerAlignment: false
+PointerAlignment: Left
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"lsmdb/'
+    Priority: 1
+  - Regex: '^<'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
+...
+
+# notes: BasedOnStyle: Google gives us Google's conventions, but we override IndentWidth: 4 (Google uses 2, but 4 is more readable for systems code) and ColumnLimit: 100 (Google uses 80, tight for template-heavy C++). 
+# The IncludeCategories enforce include ordering: project headers first, then system headers.

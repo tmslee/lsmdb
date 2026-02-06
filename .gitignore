@@ -1,0 +1,30 @@
+# build artifacts
+build/
+cmake-build-*/
+*.o
+*.a
+*.dylib
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# testing/coverage
+Testing/
+*.gcda
+*.gcno
+*.gcov
+coverage/
+
+# sanitizers
+*.dSYM/
+
+# OS
+.DS_Store
+Thumbs.dylib
+
+# compile commands
+compile_commands.json

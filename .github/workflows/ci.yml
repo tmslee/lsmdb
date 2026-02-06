@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            compiler: gcc
+            cc: gcc-14
+            cxx: g++-14
+          - os: ubuntu-24.04
+            compiler: clang
+            cc: clang-18
+            cxx: clang++-18
+
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.compiler }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build ${{ matrix.cc }} ${{ matrix.cxx }}
+
+      - name: Configure (Debug)
+        run: cmake --preset debug -G Ninja
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+
+      - name: Build (Debug)
+        run: cmake --build --preset debug
+
+      - name: Test (Debug)
+        run: ctest --preset debug
+
+  sanitizers:
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [asan, tsan, ubsan]
+
+    runs-on: ubuntu-24.04
+    name: ${{ matrix.sanitizer }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Clang
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build clang-18 clang++-18
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.sanitizer }} -G Ninja
+        env:
+          CC: clang-18
+          CXX: clang++-18
+
+      - name: Build
+        run: cmake --build build/${{ matrix.sanitizer }}
+
+      - name: Test
+        run: ctest --test-dir build/${{ matrix.sanitizer }} --output-on-failure
+
+
+# note: fail-fast: false ensures all matrix jobs run even if one fails — you want to see the full picture. 
+# Sanitizers use Clang because its sanitizer implementations are more mature. 
+# The build job tests both GCC and Clang to catch compiler-specific issues (they have different warning sets and template instantiation behaviors).
