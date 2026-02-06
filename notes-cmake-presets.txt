@@ -1,3 +1,8 @@
-The base preset is hidden: true — it's only for inheritance, never used directly. 
-CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json which clang-tidy and IDEs need for accurate analysis. 
-Build and test presets mirror configure presets so you can do cmake --build --preset debug and ctest --preset asan cleanly.
+The base preset is hidden: true — it's only for inheritance, never used directly.
+CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json which clang-tidy and IDEs need for accurate analysis.
+Build/test presets (buildPresets, testPresets) require preset version 4+ (CMake 3.23+).
+With our CMake 3.22 we use version 3, which only supports configurePresets.
+Build and test commands are slightly more explicit without those presets:
+  cmake --preset debug          (configure)
+  cmake --build build/debug     (build)
+  ctest --test-dir build/debug  (test)

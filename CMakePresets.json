@@ -1,10 +1,5 @@
 {
-    "version": 6,
-    "cmakeMinimumRequired": {
-        "major": 3,
-        "minor": 24,
-        "patch": 0
-    },
+    "version": 3,
     "configurePresets": [
         {
             "name": "base",
@@ -64,58 +59,6 @@
                 "CMAKE_BUILD_TYPE": "Release",
                 "LSMDB_SANITIZER": "fuzzer",
                 "BUILD_TESTING": "OFF"
-            }
-        }
-    ],
-    "buildPresets": [
-        {
-            "name": "debug",
-            "configurePreset": "debug"
-        },
-        {
-            "name": "release",
-            "configurePreset": "release"
-        },
-        {
-            "name": "asan",
-            "configurePreset": "asan"
-        },
-        {
-            "name": "tsan",
-            "configurePreset": "tsan"
-        },
-        {
-            "name": "ubsan",
-            "configurePreset": "ubsan"
-        }
-    ],
-    "testPresets": [
-        {
-            "name": "debug",
-            "configurePreset": "debug",
-            "output": {
-                "outputOnFailure": true
-            }
-        },
-        {
-            "name": "asan",
-            "configurePreset": "asan",
-            "output": {
-                "outputOnFailure": true
-            }
-        },
-        {
-            "name": "tsan",
-            "configurePreset": "tsan",
-            "output": {
-                "outputOnFailure": true
-            }
-        },
-        {
-            "name": "ubsan",
-            "configurePreset": "ubsan",
-            "output": {
-                "outputOnFailure": true
             }
         }
     ]
